@@ -24,44 +24,44 @@
         schema: {
           enabled: { default: true },
         },
-
+        
         init: function () {
           var el = this.el;
-          var initialPosition = el.object3D.position.clone();
           var initialScale = el.object3D.scale.clone();
           var pinchScale = 1;
-
-          el.addEventListener('gesturestart', function (evt) {
-            pinchScale = evt.detail.scale;
+          
+          el.sceneEl.addEventListener('gesturestart', function (evt) {
+            pinchScale = evt.scale;
           });
-
-          el.addEventListener('gesturechange', function (evt) {
-            // Pinch to scale
-            var newScale = initialScale.clone();
-            newScale.multiplyScalar(evt.detail.scale / pinchScale);
-            el.object3D.scale.set(newScale.x, newScale.y, newScale.z);
+          
+          el.sceneEl.addEventListener('gesturechange', function (evt) {
+            el.object3D.scale.set(
+              initialScale.x * evt.scale / pinchScale,
+              initialScale.y * evt.scale / pinchScale,
+              initialScale.z * evt.scale / pinchScale
+            );
           });
-
-          el.addEventListener('gesturemove', function (evt) {
-            // Drag to move the model
-            el.object3D.position.x += evt.detail.positionChange.x * 0.01;
-            el.object3D.position.y += evt.detail.positionChange.y * 0.01;
+          
+          el.sceneEl.addEventListener('gesturemove', function (evt) {
+            el.object3D.position.x += evt.detail.positionChange.x;
+            el.object3D.position.y += evt.detail.positionChange.y;
           });
         }
       });
     </script>
+    
   </head>
 
   <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs>
-      <!-- Marker for the 3D model, shifted to the left -->
-      <a-marker preset="hiro" position="-0.5 0 0">
+      <!-- Marker for the 3D model -->
+      <a-marker preset="hiro">
         
-        <!-- 3D model with gesture controls, farther from the marker -->
+        <!-- 3D model with gesture controls -->
         <a-entity 
           gltf-model="https://shahidkhan12x.github.io/3d/steam_engine.glb" 
-          scale="0.003 0.003 0.003" 
-          position="0 0.5 -1"  <!-- Adjusted position to make it farther -->
+          scale="0.001 0.001 0.001" 
+          position="0 0.1 0"
           animation-mixer
           gesture-detector
           gesture-handler></a-entity>
